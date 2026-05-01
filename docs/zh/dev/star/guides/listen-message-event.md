@@ -1,4 +1,3 @@
-
 # 处理消息事件
 
 事件监听器可以收到平台下发的消息内容，可以实现指令、指令组、事件监听等功能。
@@ -39,6 +38,10 @@ class AstrBotMessage:
 ```
 
 其中，`raw_message` 是消息平台适配器的**原始消息对象**。
+
+> [!WARNING]
+> 当用户开启**隔离会话**时，群消息的 `session_id` 格式会从纯群号变为 `用户ID_群ID`，`unified_msg_origin` 也会随之变化（例如 `default:GroupMessage:123456789_987654321`）。
+> 如果插件需要以群为单位存储或查询数据，请使用 `event.get_group_id()` 获取纯群ID，而不是直接使用或解析 `unified_msg_origin`，否则在隔离会话开启时会导致查询不到对应数据。
 
 ### 消息链
 
