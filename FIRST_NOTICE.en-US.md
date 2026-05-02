@@ -11,6 +11,6 @@ As of now, AstrBot has **no commercial services of any kind**, and the official 
 
 If anyone asks you to pay while using AstrBot, **you are likely being scammed**. Please request a refund immediately and report it to us by email.
 
-📊 AstrBot collects anonymous usage statistics to help improve the product. You can disable this in **Normal Config**.
+📊 AstrBot collects anonymous usage statistics to help improve the product. You can disable this in **System Config**.
 
 📮 Official email: [community@astrbot.app](mailto:community@astrbot.app)
