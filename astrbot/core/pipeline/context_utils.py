@@ -85,11 +85,31 @@ async def call_event_hook(
     #
 
     """
+    from astrbot.core import sp
+
+    session_id = event.unified_msg_origin
+    session_plugin_config = await sp.get_async(
+        scope="umo",
+        scope_id=session_id,
+        key="session_plugin_config",
+        default={},
+    )
+    session_disabled = session_plugin_config.get(session_id, {}).get(
+        "disabled_plugins", []
+    )
+
     handlers = star_handlers_registry.get_handlers_by_event_type(
         hook_type,
         plugins_name=event.plugins_name,
     )
     for handler in handlers:
+        plugin = star_map.get(handler.handler_module_path)
+        if plugin and not plugin.reserved and plugin.name in session_disabled:
+            logger.debug(
+                f"hook({hook_type.name}) -> {plugin.name} - {handler.handler_name} "
+                f"在会话 {session_id} 中被禁用，跳过。",
+            )
+            continue
         try:
             assert inspect.iscoroutinefunction(handler.handler)
             logger.debug(
