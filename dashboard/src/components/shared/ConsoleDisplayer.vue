@@ -362,7 +362,7 @@ export default {
   border-radius: 8px;
   height: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
   padding: 16px;
 }
 
@@ -404,6 +404,10 @@ export default {
 @media (max-width: 768px) {
   :deep(.console-log-line--structured) {
     grid-template-columns: 1fr;
+  }
+  :deep(.console-log-prefix:empty),
+  :deep(.console-log-level:empty) {
+    display: none;
   }
 }
 
