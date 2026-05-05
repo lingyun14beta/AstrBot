@@ -156,9 +156,12 @@ class NetworkRenderStrategy(RenderStrategy):
         if options:
             default_options |= options
 
-        if SHIKI_RUNTIME_TEMPLATE_PATTERN.search(tmpl_str):
-            tmpl_data = {"shiki_runtime": get_shiki_runtime()} | tmpl_data
-        tmpl_str = inject_shiki_runtime(tmpl_str)
+        # 在线程池中执行 Shiki 注入，避免 1.2MB JS 处理阻塞事件循环
+        import asyncio
+        loop = asyncio.get_event_loop()
+        tmpl_str, tmpl_data = await loop.run_in_executor(
+            None, self._prepare_template_sync, tmpl_str, tmpl_data
+        )
         post_data = {
             "tmpl": tmpl_str,
             "json": return_url,
@@ -219,3 +222,12 @@ class NetworkRenderStrategy(RenderStrategy):
             },
             return_url,
         )
+
+    def _prepare_template_sync(
+        self, tmpl_str: str, tmpl_data: dict
+    ) -> tuple[str, dict]:
+        """在线程池中执行的同步模板预处理（避免阻塞事件循环）"""
+        if SHIKI_RUNTIME_TEMPLATE_PATTERN.search(tmpl_str):
+            tmpl_data = {"shiki_runtime": get_shiki_runtime()} | tmpl_data
+        tmpl_str = inject_shiki_runtime(tmpl_str)
+        return tmpl_str, tmpl_data
