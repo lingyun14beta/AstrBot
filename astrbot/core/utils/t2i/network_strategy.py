@@ -223,9 +223,7 @@ class NetworkRenderStrategy(RenderStrategy):
         )
 
     @staticmethod
-    def _prepare_template_sync(
-        tmpl_str: str, tmpl_data: dict
-    ) -> tuple[str, dict]:
+    def _prepare_template_sync(tmpl_str: str, tmpl_data: dict) -> tuple[str, dict]:
         """在线程池中执行的同步模板预处理（避免阻塞事件循环）"""
         if SHIKI_RUNTIME_TEMPLATE_PATTERN.search(tmpl_str):
             tmpl_data = {"shiki_runtime": get_shiki_runtime()} | tmpl_data
