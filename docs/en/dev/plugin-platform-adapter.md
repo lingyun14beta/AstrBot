@@ -51,7 +51,7 @@ import asyncio
 from astrbot.api.platform import Platform, AstrBotMessage, MessageMember, PlatformMetadata, MessageType
 from astrbot.api.event import MessageChain
 from astrbot.api.message_components import Plain, Image, Record # Message chain components, import as needed
-from astrbot.core.platform.astr_message_event import MessageSesion
+from astrbot.core.platform.message_session import MessageSesion
 from astrbot.api.platform import register_platform_adapter
 from astrbot import logger
 from .client import FakeClient
