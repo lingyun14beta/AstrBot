@@ -211,7 +211,11 @@ class RespondStage(Stage):
             # 检查消息链是否为空
             try:
                 if await self._is_empty_message_chain(result.chain):
-                    logger.info("消息为空，跳过发送阶段")
+                    # is_model_result 用于和 internal.py 的 WARNING 日志对照排查
+                    logger.info(
+                        "消息为空，跳过发送阶段"
+                        f"（is_model_result={result.is_model_result()}）"
+                    )
                     return
             except Exception as e:
                 logger.warning(f"空内容检查异常: {e}")
