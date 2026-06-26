@@ -472,7 +472,27 @@ class InternalAgentSubStage(Stage):
             and not req.tool_calls_result
             and not user_aborted
         ):
-            logger.debug("LLM 响应为空，不保存记录。")
+            reasoning_content = getattr(llm_response, "reasoning_content", None) or ""
+            finish_reason = None
+            raw_completion = getattr(llm_response, "raw_completion", None)
+            try:
+                choices = getattr(raw_completion, "choices", None)
+                if choices:
+                    finish_reason = getattr(choices[0], "finish_reason", None)
+            except Exception:
+                pass
+            usage = getattr(llm_response, "usage", None)
+            if reasoning_content:
+                # 正文为空但有 reasoning_content：可能是 token 预算耗尽在思考阶段
+                logger.warning(
+                    "LLM 响应正文为空，但存在 reasoning_content（思维链），"
+                    "本轮响应不会被保存为有效记录。"
+                    f"finish_reason={finish_reason}, "
+                    f"reasoning_content_len={len(reasoning_content)}, "
+                    f"usage={usage}"
+                )
+            else:
+                logger.debug("LLM 响应为空，不保存记录。")
             return
 
         messages_to_save: list[Message] = []
